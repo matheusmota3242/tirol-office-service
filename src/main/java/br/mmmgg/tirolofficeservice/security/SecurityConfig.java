@@ -3,6 +3,7 @@ package br.mmmgg.tirolofficeservice.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,8 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import br.mmmgg.tirolofficeservice.filter.CustomAuthenticationFilter;
+import br.mmmgg.tirolofficeservice.filter.JWTFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -31,10 +34,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
-		http.authorizeHttpRequests().anyRequest().permitAll();
-//			.antMatchers("/users/**").permitAll();
-			
+		http.authorizeRequests().antMatchers("/login/**", "/users/token/refresh").permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/users/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN");
+		http.authorizeRequests().anyRequest().authenticated();
+		http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));	
+		http.addFilterBefore(new JWTFilter(), UsernamePasswordAuthenticationFilter.class);
 			
 	}
 	

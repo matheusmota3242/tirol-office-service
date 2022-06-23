@@ -1,14 +1,19 @@
 package br.mmmgg.tirolofficeservice.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,13 +33,19 @@ public class UserController {
 	public static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
 	@GetMapping
-	public ResponseEntity<List<User>> getUsers() {
-		return ResponseEntity.ok(service.getUsers());
+	public List<User> getUsers() {
+		return service.getUsers();
 	}
 	
 	@PostMapping
 	public User saveUser(@RequestBody @Valid User user) {
-		LOGGER.info("Endpoint entry: {}", "saveUser");
+		LOGGER.info("Endpoint entry: {} {}", "saveUser", user);
 		return service.saveUser(user);
 	}
+
+	@GetMapping("/token/refresh")
+	public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws StreamWriteException, DatabindException, IOException {
+		service.refreshToken(request, response);
+	}
+
 }
