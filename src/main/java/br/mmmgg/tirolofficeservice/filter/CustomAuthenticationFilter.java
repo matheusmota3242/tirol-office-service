@@ -34,6 +34,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 	Logger LOGGER = LoggerFactory.getLogger(CustomAuthenticationFilter.class);
 	
+	private int ACCESS_TOKEN_TIMEOUT_MILLIS = 3600 * 1000;
+
+	private int REFRESH_TOKEN_TIMEOUT_MILLIS = 2 * 3600 * 1000;
+
 	public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
 	}
@@ -55,14 +59,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		Algorithm algorithm = Algorithm.HMAC256(PropertiesUtil.loadProperties("application.properties").getProperty("jwt.secret").getBytes());
 		String accessToken = JWT.create()
 				.withSubject(user.getUsername())
-				.withExpiresAt(new Date(System.currentTimeMillis() + 1 * 60 * 1000))
+				.withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_TIMEOUT_MILLIS))
 				.withIssuer(request.getRequestURL().toString())
 				.withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
 				.sign(algorithm);
 		
 		String refreshToken = JWT.create()
 				.withSubject(user.getUsername())
-				.withExpiresAt(new Date(System.currentTimeMillis() + 2 * 60 * 1000))
+				.withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_TIMEOUT_MILLIS))
 				.withIssuer(request.getRequestURL().toString())
 				.sign(algorithm);
 		response.setHeader("access_token", accessToken);

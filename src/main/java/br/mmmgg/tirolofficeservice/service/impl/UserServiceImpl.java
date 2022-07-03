@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 				User user = getUser(username);
 				String accessToken = JWT.create()
 					.withSubject(user.getEmail())
-					.withExpiresAt(new Date(System.currentTimeMillis() + 1 * 60 * 1000))
+					.withExpiresAt(new Date(System.currentTimeMillis() + 1 * 3600 * 1000))
 					.withIssuer(request.getRequestURL().toString())
 					.withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
 					.sign(algorithm);
