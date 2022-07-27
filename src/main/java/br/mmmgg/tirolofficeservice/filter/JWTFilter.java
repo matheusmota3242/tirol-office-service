@@ -1,12 +1,14 @@
 package br.mmmgg.tirolofficeservice.filter;
 
+import static br.mmmgg.tirolofficeservice.util.JWTUtil.formattedCorrectly;
+import static br.mmmgg.tirolofficeservice.util.JWTUtil.getDecodedJWT;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,8 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,11 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import br.mmmgg.tirolofficeservice.util.PropertiesUtil;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,12 +43,9 @@ public class JWTFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 		} else {
 			String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-			if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith(BEARER_PREFIX)) {
-				String jwt = authHeader.substring(BEARER_PREFIX.length());
+			if (formattedCorrectly(authHeader)) {
 				try {
-					Algorithm algorithm = Algorithm.HMAC256(PropertiesUtil.loadProperties("application.properties").getProperty("jwt.secret").getBytes());
-					JWTVerifier verifier = JWT.require(algorithm).build();
-					DecodedJWT decodedJWT = verifier.verify(jwt);
+					DecodedJWT decodedJWT = getDecodedJWT(authHeader);
 					String username = decodedJWT.getSubject();
 					List<String> roles = decodedJWT.getClaim("roles").asList(String.class);
 					Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();

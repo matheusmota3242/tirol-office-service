@@ -33,6 +33,7 @@ import br.mmmgg.tirolofficeservice.model.User;
 import br.mmmgg.tirolofficeservice.repository.RoleRepository;
 import br.mmmgg.tirolofficeservice.repository.UserRepository;
 import br.mmmgg.tirolofficeservice.service.UserService;
+import br.mmmgg.tirolofficeservice.util.JWTUtil;
 import br.mmmgg.tirolofficeservice.util.PropertiesUtil;
 
 @Service
@@ -79,21 +80,24 @@ public class UserServiceImpl implements UserService {
 
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws StreamWriteException, DatabindException, IOException {
 		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-		if (authorizationHeader != null && !authorizationHeader.isBlank() && authorizationHeader.startsWith(BEARER_PREFIX)) {
+		if (JWTUtil.formattedCorrectly(authorizationHeader)) {
 			
 			try {
+				// TODO: refatorar para usar o JwtUtil
 				String refreshToken  = authorizationHeader.substring(BEARER_PREFIX.length());
 				Algorithm algorithm = Algorithm.HMAC256(PropertiesUtil.loadProperties("application.properties").getProperty("jwt.secret").getBytes());
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refreshToken);
 				String username = decodedJWT.getSubject();
 				User user = getUser(username);
+				
 				String accessToken = JWT.create()
 					.withSubject(user.getEmail())
 					.withExpiresAt(new Date(System.currentTimeMillis() + 1 * 3600 * 1000))
 					.withIssuer(request.getRequestURL().toString())
 					.withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
 					.sign(algorithm);
+				
 				Map<String, String> tokens = new HashMap<>();
 				tokens.put("access_token", accessToken);
 				tokens.put("refresh_token", refreshToken);
