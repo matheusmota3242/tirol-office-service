@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,10 +20,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
-import br.mmmgg.tirolofficeservice.util.PropertiesUtil;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+
+import static br.mmmgg.tirolofficeservice.util.JWTUtil.*;
+import br.mmmgg.tirolofficeservice.util.PropertiesUtil;
 
 @Component
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -34,9 +33,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 	Logger LOGGER = LoggerFactory.getLogger(CustomAuthenticationFilter.class);
 	
-	private int ACCESS_TOKEN_TIMEOUT_MILLIS = 3600 * 1000;
-
-	private int REFRESH_TOKEN_TIMEOUT_MILLIS = 2 * 3600 * 1000;
+	
 
 	public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;

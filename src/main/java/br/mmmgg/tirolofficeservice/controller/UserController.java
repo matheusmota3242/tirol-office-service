@@ -20,26 +20,27 @@ import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 
 import br.mmmgg.tirolofficeservice.model.User;
-import br.mmmgg.tirolofficeservice.service.impl.UserServiceImpl;
+import br.mmmgg.tirolofficeservice.service.impl.UserImpl;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
 	@Autowired
-	private UserServiceImpl service;
+	private UserImpl service;
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
 	@GetMapping
-	public List<User> getUsers() {
-		return service.getUsers();
+	public List<User> getAll() {
+		LOGGER.info("Endpoint entry: {}", "getAll");
+		return service.getAll();
 	}
 	
 	@PostMapping
-	public User saveUser(@RequestBody @Valid User user) {
-		LOGGER.info("Endpoint entry: {} {}", "saveUser", user);
-		return service.saveUser(user);
+	public User save(@RequestBody @Valid User user) throws IllegalArgumentException, IOException {
+		LOGGER.info("Endpoint entry: {} {}", "save", user);
+		return service.save(user);
 	}
 
 	@GetMapping("/token/refresh")

@@ -1,7 +1,6 @@
 package br.mmmgg.tirolofficeservice.filter;
 
 import static br.mmmgg.tirolofficeservice.util.JWTUtil.formattedCorrectly;
-import static br.mmmgg.tirolofficeservice.util.JWTUtil.getDecodedJWT;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +25,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.mmmgg.tirolofficeservice.util.PropertiesUtil;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
@@ -45,7 +49,10 @@ public class JWTFilter extends OncePerRequestFilter {
 			String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 			if (formattedCorrectly(authHeader)) {
 				try {
-					DecodedJWT decodedJWT = getDecodedJWT(authHeader);
+					String jwt = authHeader.substring(BEARER_PREFIX.length());
+					Algorithm algorithm = Algorithm.HMAC256(PropertiesUtil.loadProperties("application.properties").getProperty("jwt.secret").getBytes());
+					JWTVerifier verifier = JWT.require(algorithm).build();
+					DecodedJWT decodedJWT = verifier.verify(jwt);
 					String username = decodedJWT.getSubject();
 					List<String> roles = decodedJWT.getClaim("roles").asList(String.class);
 					Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
