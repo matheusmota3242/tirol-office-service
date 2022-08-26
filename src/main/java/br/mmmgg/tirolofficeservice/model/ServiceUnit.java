@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class ServiceUnit {
     
@@ -20,6 +22,7 @@ public class ServiceUnit {
     @NotEmpty
     private String name;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "serviceUnit")
     private List<Department> departments = new ArrayList<>();
 
@@ -49,7 +52,7 @@ public class ServiceUnit {
 
 	@Override
 	public String toString() {
-		return "ServiceUnit [id=" + id + ", name=" + name + ", departments=" + departments + "]";
+		return "ServiceUnit [id=" + id + ", name=" + name + "]";
 	}
     
 

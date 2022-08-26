@@ -21,8 +21,8 @@ public class ServiceUnitImpl implements IService<ServiceUnit> {
 	}
 
 	@Override
-	public ServiceUnit getById(Integer id) throws NoSuchMethodException {
-		return repository.findById(id).orElseThrow(NoSuchMethodException::new);
+	public ServiceUnit getById(Integer id) {
+		return repository.findById(id).orElseThrow();
 	}
 
 	@Override

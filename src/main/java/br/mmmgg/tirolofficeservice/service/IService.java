@@ -6,9 +6,9 @@ public interface IService<T> {
 
 	T save(T entity);
 	
-	T getById(Integer id) throws NoSuchMethodException;
+	T getById(Integer id);
 	
 	List<T> getAll();
 	
-	void removeById(Integer id);
+	void removeById(Integer id) throws IllegalArgumentException;
 }

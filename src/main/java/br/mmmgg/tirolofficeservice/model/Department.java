@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Department {
 
@@ -19,6 +21,7 @@ public class Department {
 
     private String name;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "service_unit_id")
     private ServiceUnit serviceUnit;

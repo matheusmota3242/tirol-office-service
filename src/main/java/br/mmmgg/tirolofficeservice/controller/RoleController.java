@@ -65,7 +65,13 @@ public class RoleController {
 	@DeleteMapping("{id}")
 	public void removeById(@NotNull(message = "The 'id' argument is mandatory") Integer id) {
 		LOGGER.info(LogUtil.REMOVE_BY_ID_ENTRY_POINT, id);
-		service.removeById(id);
+		try {
+			service.removeById(id);
+		} catch (IllegalArgumentException e) {
+			LOGGER.info(LogUtil.INEXISTENT_REGISTER, id);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					"There isn't a register that contains the passed 'id' value");
+		}
 		LOGGER.info(LogUtil.REMOVE_BY_ID_EXIT_POINT, id);
 	}
 }

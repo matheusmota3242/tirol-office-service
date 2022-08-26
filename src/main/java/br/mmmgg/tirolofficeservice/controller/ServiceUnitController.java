@@ -1,6 +1,7 @@
 package br.mmmgg.tirolofficeservice.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
 
@@ -52,7 +53,7 @@ public class ServiceUnitController {
 		ServiceUnit serviceUnit = null;
 		try {
 			serviceUnit = service.getById(id);
-		} catch (NoSuchMethodException e) {
+		} catch (NoSuchElementException e) {
 			LOGGER.error(LogUtil.INEXISTENT_REGISTER, id);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
 					"There isn't a register that contains the passed 'id' value");
@@ -64,7 +65,13 @@ public class ServiceUnitController {
     @DeleteMapping("{id}")
     public void removeById(@PathVariable Integer id) {
     	LOGGER.info(LogUtil.REMOVE_BY_ID_ENTRY_POINT, id);
-    	service.removeById(id);
+    	try {
+    		service.removeById(id);
+		} catch (IllegalArgumentException e) {
+			LOGGER.info(LogUtil.INEXISTENT_REGISTER, id);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					"There isn't a register that contains the passed 'id' value");
+		}
     	LOGGER.info(LogUtil.REMOVE_BY_ID_EXIT_POINT, id);
     }
 }

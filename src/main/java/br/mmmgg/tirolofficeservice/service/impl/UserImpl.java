@@ -113,7 +113,7 @@ public class UserImpl implements IService<User> {
 	}
 
 	@Override
-	public User getById(Integer id) throws NoSuchMethodException {
+	public User getById(Integer id) {
 		return repository.findById(id).orElseThrow();
 	}
 
@@ -121,7 +121,5 @@ public class UserImpl implements IService<User> {
 	public void removeById(Integer id) {
 		repository.deleteById(id);
 	}
-	
-	
 
 }
