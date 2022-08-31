@@ -1,7 +1,6 @@
 package br.mmmgg.tirolofficeservice.controller;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
 
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.mmmgg.tirolofficeservice.ValidationException;
 import br.mmmgg.tirolofficeservice.model.ServiceUnit;
 import br.mmmgg.tirolofficeservice.service.impl.ServiceUnitImpl;
 import br.mmmgg.tirolofficeservice.util.LogUtil;
@@ -34,7 +34,12 @@ public class ServiceUnitController {
     @PostMapping
     public ServiceUnit save(@Valid @RequestBody ServiceUnit serviceUnit) {
     	LOGGER.info(LogUtil.SAVE_ENTRY_POINT, serviceUnit);
-    	serviceUnit = service.save(serviceUnit);
+    	try {
+        	serviceUnit = service.save(serviceUnit);
+		} catch (ValidationException e) {
+			LOGGER.error(e.getDescription());
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getDescription(), e.getCause());
+		}
     	LOGGER.info(LogUtil.SAVE_EXIT_POINT, serviceUnit);
         return serviceUnit;
     }
@@ -53,10 +58,10 @@ public class ServiceUnitController {
 		ServiceUnit serviceUnit = null;
 		try {
 			serviceUnit = service.getById(id);
-		} catch (NoSuchElementException e) {
-			LOGGER.error(LogUtil.INEXISTENT_REGISTER, id);
+		} catch (ValidationException e) {
+			LOGGER.error(e.getDescription());
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-					"There isn't a register that contains the passed 'id' value");
+					e.getDescription());
 		}
 		LOGGER.info(LogUtil.GET_BY_ID_EXIT_POINT, serviceUnit);
 		return serviceUnit;
@@ -67,10 +72,10 @@ public class ServiceUnitController {
     	LOGGER.info(LogUtil.REMOVE_BY_ID_ENTRY_POINT, id);
     	try {
     		service.removeById(id);
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(LogUtil.INEXISTENT_REGISTER, id);
+		} catch (ValidationException e) {
+			LOGGER.error(e.getDescription());
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-					"There isn't a register that contains the passed 'id' value");
+					e.getDescription());
 		}
     	LOGGER.info(LogUtil.REMOVE_BY_ID_EXIT_POINT, id);
     }

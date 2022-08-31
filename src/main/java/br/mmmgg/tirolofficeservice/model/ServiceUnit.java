@@ -25,6 +25,14 @@ public class ServiceUnit {
     @JsonManagedReference
     @OneToMany(mappedBy = "serviceUnit")
     private List<Department> departments = new ArrayList<>();
+    
+    public ServiceUnit() {
+		super();
+	}
+    
+    public ServiceUnit(Integer id) {
+		this.id = id;
+	}
 
     public Integer getId() {
         return id;

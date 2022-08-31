@@ -1,10 +1,8 @@
 package br.mmmgg.tirolofficeservice.controller;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.mmmgg.tirolofficeservice.ValidationException;
 import br.mmmgg.tirolofficeservice.model.Role;
 import br.mmmgg.tirolofficeservice.service.impl.RoleImpl;
 import br.mmmgg.tirolofficeservice.util.LogUtil;
@@ -34,7 +33,12 @@ public class RoleController {
 	@PostMapping
 	public Role save(@Valid @RequestBody Role role) {
 		LOGGER.info(LogUtil.SAVE_ENTRY_POINT, role);
-		role = service.save(role);
+		try {
+			role = service.save(role);
+		} catch (ValidationException e) {
+			LOGGER.error(LogUtil.SAVE_ERROR, role);
+		}
+		
 		LOGGER.info(LogUtil.SAVE_EXIT_POINT, role);
 		return role;
 	}
@@ -48,29 +52,29 @@ public class RoleController {
 	}
 	
 	@GetMapping("{id}")
-	public Role getById(@NotNull(message = "The 'id' argument is mandatory") Integer id) {
+	public Role getById(Integer id) {
 		LOGGER.info(LogUtil.GET_BY_ID_ENTRY_POINT, id);
 		Role role = null;
 		try {
 			role = service.getById(id);
-		} catch (NoSuchElementException e) {
-			LOGGER.error(LogUtil.INEXISTENT_REGISTER, id);
+		} catch (ValidationException e) {
+			LOGGER.error(LogUtil.INEXISTENT_REGISTER_ERROR, id);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-					"There isn't a register that contains the passed 'id' value");
+					e.getDescription());
 		}
 		LOGGER.info(LogUtil.GET_BY_ID_EXIT_POINT, role);
 		return role;
 	}
 	
 	@DeleteMapping("{id}")
-	public void removeById(@NotNull(message = "The 'id' argument is mandatory") Integer id) {
+	public void removeById(Integer id) {
 		LOGGER.info(LogUtil.REMOVE_BY_ID_ENTRY_POINT, id);
 		try {
 			service.removeById(id);
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(LogUtil.INEXISTENT_REGISTER, id);
+		} catch (ValidationException e) {
+			LOGGER.error(LogUtil.REMOVE_ERROR, id);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-					"There isn't a register that contains the passed 'id' value");
+					e.getDescription());
 		}
 		LOGGER.info(LogUtil.REMOVE_BY_ID_EXIT_POINT, id);
 	}
