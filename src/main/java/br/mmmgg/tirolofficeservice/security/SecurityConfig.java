@@ -35,11 +35,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests().antMatchers("/login/**", "/users/token/refresh").permitAll();
+		http.authorizeRequests().antMatchers("/roles/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/users/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN");
-		http.authorizeRequests().antMatchers(HttpMethod.POST, "/service-units/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers("/service-units/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/service-units/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER");
-		http.authorizeRequests().antMatchers("/roles/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers("/departments/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/departments/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER");
+		http.authorizeRequests().antMatchers("/equipments/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/equipments/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER");
 		http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));	
 		http.addFilterBefore(new JWTFilter(), UsernamePasswordAuthenticationFilter.class);
 			

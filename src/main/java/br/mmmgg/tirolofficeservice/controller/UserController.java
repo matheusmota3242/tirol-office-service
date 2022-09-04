@@ -60,7 +60,7 @@ public class UserController {
 		try {
 			user = service.getById(id);
 		} catch (NoSuchElementException e) {
-			LOGGER.error(LogUtil.INEXISTENT_REGISTER, id);
+			LOGGER.error(LogUtil.INEXISTENT_REGISTER_ERROR, id);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
 					"There isn't a register that contains the passed 'id' value");
 		}
@@ -74,7 +74,7 @@ public class UserController {
 		try {
 			service.removeById(id);
 		} catch (IllegalArgumentException e) {
-			LOGGER.info(LogUtil.INEXISTENT_REGISTER, id);
+			LOGGER.info(LogUtil.INEXISTENT_REGISTER_ERROR, id);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
 					"There isn't a register that contains the passed 'id' value");
 		}

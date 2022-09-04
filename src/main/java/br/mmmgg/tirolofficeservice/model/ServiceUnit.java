@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class ServiceUnit {
@@ -22,7 +22,7 @@ public class ServiceUnit {
     @NotEmpty
     private String name;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "serviceUnit")
     private List<Department> departments = new ArrayList<>();
     

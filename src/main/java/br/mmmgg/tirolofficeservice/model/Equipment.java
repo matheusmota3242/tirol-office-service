@@ -36,9 +36,19 @@ public class Equipment {
         this.description = description;
     }
 	
-    @Override
+	
+	
+    public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+
+	@Override
 	public String toString() {
-		return "Equipment [id=" + id + ", description=" + description + ", department=" + department + "]";
+		return "Equipment [id=" + id + ", description=" + description + ", department=" + department.toString() + "]";
 	}
 
 }

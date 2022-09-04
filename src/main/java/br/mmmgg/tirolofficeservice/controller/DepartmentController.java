@@ -23,7 +23,7 @@ import br.mmmgg.tirolofficeservice.service.impl.DepartmentImpl;
 import br.mmmgg.tirolofficeservice.util.LogUtil;
 
 @RestController
-@RequestMapping("department")
+@RequestMapping("departments")
 public class DepartmentController {
 
 	@Autowired

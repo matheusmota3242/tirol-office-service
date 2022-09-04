@@ -1,5 +1,6 @@
 package br.mmmgg.tirolofficeservice.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -10,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Department {
@@ -21,13 +22,13 @@ public class Department {
 
     private String name;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "service_unit_id")
     private ServiceUnit serviceUnit;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "department")
-    private List<Equipment> equipments;
+    private List<Equipment> equipments = new ArrayList<>();
 
     public Integer getId() {
         return id;
