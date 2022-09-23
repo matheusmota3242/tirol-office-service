@@ -14,6 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -26,15 +28,19 @@ public class User {
 	
 	
 	@Column(unique = true)
-	@NotBlank(message = "Field 'email' is mandatory")
+	@NotBlank(message = "O campo 'email' é obrigatório.")
 	private String email;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	@NotBlank(message = "Field 'password' is mandatory")
+	@NotBlank(message = "O campo 'password' é obrigatório.")
 	private String password;
 	
-	@NotBlank(message = "Field 'name' is mandatory")
+	@NotBlank(message = "O campo 'name' é obrigatório.")
 	private String name;
+	
+	@NotBlank
+	@CPF
+	private String cpf;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "role_id")
@@ -64,6 +70,14 @@ public class User {
 		this.password = password;
 	}
 
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
 	public Collection<Role> getRoles() {
 		return roles;
 	}
@@ -82,10 +96,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [email=" + email + ", id=" + id + ", name=" + name + ", password=" + password + ", roles=" + roles
-				+ "]";
+		return "User [id=" + id + ", email=" + email + ", password=" + password + ", name=" + name + ", cpf=" + cpf
+				+ ", roles=" + roles + "]";
 	}
-
-	
 
 }

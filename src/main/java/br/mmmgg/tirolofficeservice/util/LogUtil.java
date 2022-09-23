@@ -18,5 +18,5 @@ public class LogUtil {
 	// ERROR
 	public static final String INEXISTENT_REGISTER_ERROR = "Não há registro que corresponda ao 'id' passado. Valor: {}";
 	public static final String REMOVE_ERROR = "Ocorreu um erro ao tentar deletar o registro com o seguinte 'id': {}.";
-	public static final String SAVE_ERROR = "Ocorreum um erro ao tentar persistir o objeto. Valor: {}";
+	public static final String SAVE_ERROR = "Ocorreu um erro ao tentar persistir o objeto. Valor: {}.";
 }

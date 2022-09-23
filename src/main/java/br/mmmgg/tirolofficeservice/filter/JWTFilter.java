@@ -61,6 +61,7 @@ public class JWTFilter extends OncePerRequestFilter {
 					});
 					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
 					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+					LOGGER.info("User making req: {}", username);
 					filterChain.doFilter(request, response);
 				} catch (Exception e) {
 					LOGGER.error("Error logging in: {}", e.getMessage());

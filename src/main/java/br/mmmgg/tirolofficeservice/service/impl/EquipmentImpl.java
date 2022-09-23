@@ -1,6 +1,7 @@
 package br.mmmgg.tirolofficeservice.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class EquipmentImpl implements IService<Equipment> {
 
 	@Override
 	public Equipment getById(Integer id) throws ValidationException {
-		return repository.findById(id).orElseThrow(() -> new ValidationException(ErrorMessageUtil.INEXISTENT_REGISTER));
+		return findById(id).orElseThrow(() -> new ValidationException(ErrorMessageUtil.INEXISTENT_REGISTER));
 	}
 
 	@Override
@@ -43,6 +44,10 @@ public class EquipmentImpl implements IService<Equipment> {
 		} catch (Exception e) {
 			throw new ValidationException(e, ErrorMessageUtil.REMOVE_REGISTER);
 		}
+	}
+	
+	public Optional<Equipment> findById(Integer id) {
+		return repository.findById(id);
 	}
 
 }
