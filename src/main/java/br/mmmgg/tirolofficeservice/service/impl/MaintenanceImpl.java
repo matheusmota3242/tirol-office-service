@@ -1,9 +1,11 @@
 package br.mmmgg.tirolofficeservice.service.impl;
 
-import static br.mmmgg.tirolofficeservice.util.ErrorMessageUtil.*;
+import static br.mmmgg.tirolofficeservice.util.ErrorMessageUtil.INEXISTENT_REGISTER;
+import static br.mmmgg.tirolofficeservice.util.ErrorMessageUtil.REMOVE_REGISTER;
+import static br.mmmgg.tirolofficeservice.util.ErrorMessageUtil.SAVE_REGISTER;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,7 +59,21 @@ public class MaintenanceImpl implements IService<Maintenance> {
 		}
 	}
 	
-	public boolean hasValidProperties(Maintenance maintenance) {
+	public Maintenance setHasOccured(Integer id, boolean hasOccured) throws ValidationException {
+		try {
+			Maintenance maintenance = getById(id);
+			if (LocalDateTime.now().isAfter(maintenance.getDateTime())) {
+				maintenance.setHasOccured(hasOccured);
+				return save(maintenance);
+			} else {
+				throw new IllegalStateException("Não é possível alterar o status de ocorrência de uma manutenção antes da data/hora marcada.");
+			}
+		} catch (Exception e) {
+			throw new ValidationException(e, "Erro ao tentar modificar status de ocorrência da manutnção.");
+		}
+	}
+	
+	private boolean hasValidProperties(Maintenance maintenance) {
 		boolean validEquipment = maintenance.getEquipment() != null
 				&& maintenance.getEquipment().getId() != null
 				&& equipmentService.findById(maintenance.getEquipment().getId()).isPresent();

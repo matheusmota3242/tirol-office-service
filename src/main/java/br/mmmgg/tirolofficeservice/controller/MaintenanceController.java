@@ -14,6 +14,7 @@ import static br.mmmgg.tirolofficeservice.util.LogUtil.SAVE_EXIT_POINT;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,14 +68,14 @@ public class MaintenanceController {
 	@GetMapping("{id}")
 	public Maintenance getById(@PathVariable Integer id) {
 		LOGGER.info(GET_BY_ID_ENTRY_POINT, id);
-		Maintenance Maintenance = null;
+		Maintenance maintenance = null;
 		try {
-			Maintenance = service.getById(id);	
+			maintenance = service.getById(id);	
 		} catch (ValidationException e) {
 			LOGGER.error(INEXISTENT_REGISTER_ERROR);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getDescription(), e.getCause());
 		}
-		return Maintenance;
+		return maintenance;
 	}
 	
 	@DeleteMapping("{id}")
@@ -87,5 +88,18 @@ public class MaintenanceController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getDescription(), e.getCause());
 		}
 		LOGGER.info(REMOVE_BY_ID_EXIT_POINT, id);
+	}
+	
+	public Maintenance setHasOccured(@NotNull Integer id, boolean hasOccured) {
+		LOGGER.info("[ENTRADA] Alteração de status de manutenção. Dados: {}, {}", id, hasOccured);
+		Maintenance maintenance = null;
+		try {
+			maintenance = service.setHasOccured(id, hasOccured);
+		} catch (ValidationException e) {
+			LOGGER.error("Erro ao tentar alterar status da manutenção. Dados: {}, {}", id, true);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getDescription(), e.getCause());
+		}
+		LOGGER.info("[SAÍDA] Alteração de status de manutenção. {}", maintenance);
+		return maintenance;
 	}
 }

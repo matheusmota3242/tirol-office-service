@@ -6,7 +6,7 @@ public class LogUtil {
 	public static final String SAVE_ENTRY_POINT = "[ENTRADA] Salvar entidade: {}";
 	public static final String GET_ALL_ENTRY_POINT = "[ENTRADA] Recebe todos os registros";
 	public static final String GET_BY_ID_ENTRY_POINT = "[ENTRADA] Recebe registro por 'id': {}";
-	public static final String REMOVE_BY_ID_ENTRY_POINT = "Entrada remove registro por 'id': {}";
+	public static final String REMOVE_BY_ID_ENTRY_POINT = "[ENTRADA] Remove registro por 'id': {}";
 	
 	// EXIT POINT
 	public static final String SAVE_EXIT_POINT = "[SAIDA] Entidade persistida: {}";
